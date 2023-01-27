@@ -1,4 +1,4 @@
-package lk.play_tech.chat_application.controller;
+package chat.controller;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -12,7 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import lk.play_tech.chat_application.model.Client;
+import chat.model.Client;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
@@ -20,9 +20,8 @@ import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 
-import static lk.play_tech.chat_application.StringUtils.isImage;
+import static chat.StringUtils.isImage;
 
 public class ServerFormController {
     public ScrollPane msgContext;
@@ -281,15 +280,15 @@ public class ServerFormController {
         }
         isUsed = true;
         VBox dialogVbox = new VBox(20);
-        ImageView smile = new ImageView(new Image("lk/play_tech/chat_application/assets/smile.png"));
+        ImageView smile = new ImageView(new Image("chat/assets/smile.png"));
         smile.setFitWidth(30);
         smile.setFitHeight(30);
         dialogVbox.getChildren().add(smile);
-        ImageView heart = new ImageView(new Image("lk/play_tech/chat_application/assets/heart.png"));
+        ImageView heart = new ImageView(new Image("chat/assets/heart.png"));
         heart.setFitWidth(30);
         heart.setFitHeight(30);
         dialogVbox.getChildren().add(heart);
-        ImageView sadFace = new ImageView(new Image("lk/play_tech/chat_application/assets/sad-face.png"));
+        ImageView sadFace = new ImageView(new Image("chat/assets/sad-face.png"));
         sadFace.setFitWidth(30);
         sadFace.setFitHeight(30);
         dialogVbox.getChildren().add(sadFace);

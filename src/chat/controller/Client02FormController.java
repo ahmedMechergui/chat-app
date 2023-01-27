@@ -1,29 +1,27 @@
-package lk.play_tech.chat_application.controller;
+package chat.controller;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import lk.play_tech.chat_application.StringUtils;
+import chat.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 
-import static lk.play_tech.chat_application.KeyUtils.isEnter;
-import static lk.play_tech.chat_application.StringUtils.isImage;
+import static chat.KeyUtils.isEnter;
+import static chat.StringUtils.isImage;
 
 public class Client02FormController {
     public ScrollPane msgContext;
@@ -167,15 +165,15 @@ public class Client02FormController {
         }
         isUsed = true;
         VBox dialogVbox = new VBox(20);
-        ImageView smile = new ImageView(new Image("lk/play_tech/chat_application/assets/smile.png"));
+        ImageView smile = new ImageView(new Image("chat/assets/smile.png"));
         smile.setFitWidth(30);
         smile.setFitHeight(30);
         dialogVbox.getChildren().add(smile);
-        ImageView heart = new ImageView(new Image("lk/play_tech/chat_application/assets/heart.png"));
+        ImageView heart = new ImageView(new Image("chat/assets/heart.png"));
         heart.setFitWidth(30);
         heart.setFitHeight(30);
         dialogVbox.getChildren().add(heart);
-        ImageView sadFace = new ImageView(new Image("lk/play_tech/chat_application/assets/sad-face.png"));
+        ImageView sadFace = new ImageView(new Image("chat/assets/sad-face.png"));
         sadFace.setFitWidth(30);
         sadFace.setFitHeight(30);
         dialogVbox.getChildren().add(sadFace);

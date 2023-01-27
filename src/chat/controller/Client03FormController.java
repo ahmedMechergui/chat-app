@@ -1,4 +1,4 @@
-package lk.play_tech.chat_application.controller;
+package chat.controller;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -13,22 +13,22 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import lk.play_tech.chat_application.StringUtils;
+import chat.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 
-import static lk.play_tech.chat_application.KeyUtils.isEnter;
-import static lk.play_tech.chat_application.StringUtils.isImage;
+import static chat.KeyUtils.isEnter;
+import static chat.StringUtils.isImage;
 
-public class Client01FormController {
-    public static boolean isImageChoose = false;
-    final int PORT = 50000;
+public class Client03FormController {
     public ScrollPane msgContext;
     public TextField txtMessage;
     public AnchorPane context = new AnchorPane();
+
+    final int PORT = 65000;
     public Label lblClient;
     public AnchorPane emoji;
     Socket socket;
@@ -38,11 +38,11 @@ public class Client01FormController {
     String message = "";
     int i = 10;
     String path = "";
-    ObjectOutputStream oos;
-    ObjectInputStream ois;
+    public static boolean isImageChoose = false;
     File file;
     OutputStream imgOutputStream;
     InputStream imgInputStream;
+    public static String name;
     boolean isUsed = false;
 
     public void initialize() {
@@ -51,11 +51,13 @@ public class Client01FormController {
         msgContext.vvalueProperty().bind(context.heightProperty());
         msgContext.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         msgContext.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        lblClient.setText(LoginForm01Controller.name);
+        lblClient.setText(LoginForm03Controller.name);
+        name = lblClient.getText();
 
         new Thread(() -> {
             try {
                 socket = new Socket("localhost", PORT);
+
                 while (true) {
                     dataOutputStream = new DataOutputStream(socket.getOutputStream());
                     dataInputStream = new DataInputStream(socket.getInputStream());
@@ -72,7 +74,7 @@ public class Client01FormController {
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-                                i += 10;
+                                i+= 10;
                                 Image img = SwingFXUtils.toFXImage(sendImage, null);
                                 ImageView imageView = new ImageView(img);
                                 imageView.setFitHeight(150);
@@ -80,8 +82,8 @@ public class Client01FormController {
                                 imageView.setLayoutY(i);
                                 context.getChildren().add(imageView);
                                 i += 150;
-                            } else if (message.startsWith(LoginForm01Controller.name)) {
-                                message = message.replace(LoginForm01Controller.name, "You");
+                            } else if (message.startsWith(LoginForm03Controller.name)) {
+                                message = message.replace(LoginForm03Controller.name, "You");
                                 Label label = new Label(message);
                                 label.setStyle(" -fx-font-family: Ubuntu; -fx-font-size: 20px; -fx-background-color: #85b6ff; -fx-text-fill: #5c5c5c");
                                 label.setLayoutY(i);
@@ -101,17 +103,6 @@ public class Client01FormController {
             }
         }).start();
 
-        txtMessage.setOnAction(event -> {
-            try {
-                sendMessage();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    public void btnSendOnAction(MouseEvent actionEvent) throws IOException {
-        sendMessage();
     }
 
     public void btnSendOnActionKeyPressed(KeyEvent keyEvent) {
@@ -128,12 +119,16 @@ public class Client01FormController {
         if (isImageChoose) {
             dataOutputStream.writeUTF(path.trim());
             dataOutputStream.flush();
-        } else if (!StringUtils.isBlank(txtMessage.getText())) {
+        } else if (!StringUtils.isBlank(txtMessage.getText())){
             dataOutputStream.writeUTF(lblClient.getText() + " : " + txtMessage.getText().trim());
             dataOutputStream.flush();
         }
         isImageChoose = false;
         txtMessage.clear();
+    }
+
+    public void btnSendOnAction(MouseEvent actionEvent) throws IOException {
+        sendMessage();
     }
 
     public void btnImageChooserOnAction(MouseEvent actionEvent) throws IOException {
@@ -152,6 +147,7 @@ public class Client01FormController {
         }
     }
 
+
     public void btnExitOnAction(MouseEvent actionEvent) throws IOException {
         if (socket != null) {
             dataOutputStream.writeUTF("exit".trim());
@@ -169,15 +165,15 @@ public class Client01FormController {
         }
         isUsed = true;
         VBox dialogVbox = new VBox(20);
-        ImageView smile = new ImageView(new Image("lk/play_tech/chat_application/assets/smile.png"));
+        ImageView smile = new ImageView(new Image("chat/assets/smile.png"));
         smile.setFitWidth(30);
         smile.setFitHeight(30);
         dialogVbox.getChildren().add(smile);
-        ImageView heart = new ImageView(new Image("lk/play_tech/chat_application/assets/heart.png"));
+        ImageView heart = new ImageView(new Image("chat/assets/heart.png"));
         heart.setFitWidth(30);
         heart.setFitHeight(30);
         dialogVbox.getChildren().add(heart);
-        ImageView sadFace = new ImageView(new Image("lk/play_tech/chat_application/assets/sad-face.png"));
+        ImageView sadFace = new ImageView(new Image("chat/assets/sad-face.png"));
         sadFace.setFitWidth(30);
         sadFace.setFitHeight(30);
         dialogVbox.getChildren().add(sadFace);

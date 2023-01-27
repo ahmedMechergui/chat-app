@@ -1,4 +1,4 @@
-package lk.play_tech.chat_application;
+package chat;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;

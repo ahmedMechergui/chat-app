@@ -13,7 +13,7 @@ public class ServerInitializer extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        primaryStage.setScene(new Scene(FXMLLoader.load(getClass().getResource("lk/play_tech/chat_application/view/server-form.fxml"))));
+        primaryStage.setScene(new Scene(FXMLLoader.load(getClass().getResource("chat/view/server-form.fxml"))));
         primaryStage.show();
     }
 }

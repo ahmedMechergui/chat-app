@@ -1,4 +1,4 @@
-package lk.play_tech.chat_application.controller;
+package chat.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-import static lk.play_tech.chat_application.KeyUtils.isEnter;
+import static chat.KeyUtils.isEnter;
 
 public class LoginForm01Controller {
     public TextField txtName;

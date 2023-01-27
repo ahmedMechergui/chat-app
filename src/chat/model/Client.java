@@ -1,11 +1,10 @@
-package lk.play_tech.chat_application.model;
+package chat.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.imageio.stream.ImageInputStream;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
