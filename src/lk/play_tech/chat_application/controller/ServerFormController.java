@@ -22,6 +22,8 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 
+import static lk.play_tech.chat_application.StringUtils.isImage;
+
 public class ServerFormController {
     public ScrollPane msgContext;
     public TextField txtMessage;
@@ -52,46 +54,9 @@ public class ServerFormController {
         Platform.setImplicitExit(false);
         msgContext.setContent(context);
         msgContext.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        msgContext.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        msgContext.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         msgContext.vvalueProperty().bind(context.heightProperty());
 
-//        new Thread(() -> {
-//            try {
-//                Socket imgSocket = new Socket("localhost", PORT + 1);
-//                while (true) {
-//                    imgOutputStream = imgSocket.getOutputStream();
-//                    imgInputStream = imgSocket.getInputStream();
-//
-//                    byte[] sizeAr = new byte[4];
-//                    imgInputStream.read(sizeAr);
-//                    int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-//
-//                    byte[] imageAr = new byte[size];
-//                    imgInputStream.read(imageAr);
-//
-//                    BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
-//
-//                    System.out.println("Received " + image.getHeight() + "x" + image.getWidth() + ": " + System.currentTimeMillis());
-//                    ImageIO.write(image, "jpg", new File("/media/sandu/0559F5C021740317/GDSE/Project_Zone/IdeaProjects/INP_Course_Work/src/lk/play_tech/chat_application/bo/test4.jpg"));
-//                    //BufferedImage sendImage = ImageIO.read(new File("/home/sandu/Downloads/296351115_1695464754171592_2138034279597586981_n.jpg"));
-//
-//                    Platform.runLater(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Image img = SwingFXUtils.toFXImage(image, null);
-//                            ImageView imageView = new ImageView(img);
-//                            imageView.setFitHeight(150);
-//                            imageView.setFitWidth(150);
-//                            imageView.setLayoutY(100);
-//                            context.getChildren().add(imageView);
-//                            i += 120;
-//                        }
-//                    });
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
         new Thread(() -> {
             while (true) {
                 serverClient = new Client(PORT);
@@ -142,42 +107,7 @@ public class ServerFormController {
                 }
             }
         }).start();
-//        new Thread(() -> {
-//            try {
-//                serverClient.acceptImgConnection(PORT + 5);
-//                serverClient.setImageInputAndOutput();
-//                processImage(serverClient.getImgInputStream());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-//        new Thread(() -> {
-//            try {
-//                client.acceptImgConnection(PORT1 + 5);
-//                client.setImageInputAndOutput();
-//                processImage(client.getImgInputStream());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-//        new Thread(() -> {
-//            try {
-//                client2.acceptImgConnection(PORT2 + 1);
-//                client2.setImageInputAndOutput();
-//                processImage(client2.getImgInputStream());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-//        new Thread(() -> {
-//            try {
-//                client3.acceptImgConnection(PORT3 + 1);
-//                client3.setImageInputAndOutput();
-//                processImage(client3.getImgInputStream());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
+
         new Thread(() -> {
             try {
                 socket = new Socket("localhost", PORT);
@@ -199,7 +129,7 @@ public class ServerFormController {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            if (message.startsWith("/")) {
+                            if (isImage(message)) {
                                 BufferedImage sendImage = null;
                                 try {
                                     sendImage = ImageIO.read(new File(message));
@@ -253,7 +183,6 @@ public class ServerFormController {
         File file = chooser.showOpenDialog(stage);
 
         if (file != null) {
-//            dataOutputStream.writeUTF(file.getPath());
             path = file.getPath();
             System.out.println("selected");
             System.out.println(file.getPath());

@@ -8,16 +8,22 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import lk.play_tech.chat_application.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
+
+import static lk.play_tech.chat_application.KeyUtils.isEnter;
+import static lk.play_tech.chat_application.StringUtils.isImage;
 
 public class Client03FormController {
     public ScrollPane msgContext;
@@ -46,7 +52,7 @@ public class Client03FormController {
         msgContext.setContent(context);
         msgContext.vvalueProperty().bind(context.heightProperty());
         msgContext.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        msgContext.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        msgContext.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         lblClient.setText(LoginForm03Controller.name);
         name = lblClient.getText();
 
@@ -63,13 +69,14 @@ public class Client03FormController {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            if (message.startsWith("/")) {
+                            if (isImage(message)) {
                                 BufferedImage sendImage = null;
                                 try {
                                     sendImage = ImageIO.read(new File(message));
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
+                                i+= 10;
                                 Image img = SwingFXUtils.toFXImage(sendImage, null);
                                 ImageView imageView = new ImageView(img);
                                 imageView.setFitHeight(150);
@@ -98,68 +105,32 @@ public class Client03FormController {
             }
         }).start();
 
-//        new Thread(() -> {
-//            try {
-//                imgSocket = new Socket("localhost", PORT + 1);
-//
-//                while (true) {
-//                    imgOutputStream = imgSocket.getOutputStream();
-//                    imgInputStream = imgSocket.getInputStream();
-//                    byte[] sizeAr = new byte[4];
-//                    imgInputStream.read(sizeAr);
-//                    int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-//
-//                    byte[] imageAr = new byte[size];
-//                    imgInputStream.read(imageAr);
-//
-//                    BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
-//
-//                    System.out.println("Received " + image.getHeight() + "x" + image.getWidth() + ": " + System.currentTimeMillis());
-//                    ImageIO.write(image, "jpg", new File("/media/sandu/0559F5C021740317/GDSE/Project_Zone/IdeaProjects/INP_Course_Work/src/lk/play_tech/chat_application/bo/test3.jpg"));
-//                    //BufferedImage sendImage = ImageIO.read(new File("/home/sandu/Downloads/296351115_1695464754171592_2138034279597586981_n.jpg"));
-//
-//                    Platform.runLater(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Image img = SwingFXUtils.toFXImage(image, null);
-//                            ImageView imageView = new ImageView(img);
-//                            imageView.setFitHeight(150);
-//                            imageView.setFitWidth(150);
-//                            imageView.setLayoutY(100);
-//                            context.getChildren().add(imageView);
-//                            i += 120;
-//                        }
-//                    });
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
     }
 
-    public void btnSendOnAction(MouseEvent actionEvent) throws IOException {
-////        if (isImageChoose){
-//            BufferedImage image = ImageIO.read(new File(path));
-//
-//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//            ImageIO.write(image, "png", byteArrayOutputStream);
-//
-//            byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
-//            dataOutputStream.write(size);
-//            dataOutputStream.write(byteArrayOutputStream.toByteArray());
-//            dataOutputStream.flush();
-////        }else {
-////
-////        }
+    public void btnSendOnActionKeyPressed(KeyEvent keyEvent) {
+        if (isEnter(keyEvent)) {
+            try {
+                sendMessage();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void sendMessage() throws IOException {
         if (isImageChoose) {
             dataOutputStream.writeUTF(path.trim());
             dataOutputStream.flush();
-            isImageChoose = false;
-        } else {
+        } else if (!StringUtils.isBlank(txtMessage.getText())){
             dataOutputStream.writeUTF(lblClient.getText() + " : " + txtMessage.getText().trim());
             dataOutputStream.flush();
         }
+        isImageChoose = false;
         txtMessage.clear();
+    }
+
+    public void btnSendOnAction(MouseEvent actionEvent) throws IOException {
+        sendMessage();
     }
 
     public void btnImageChooserOnAction(MouseEvent actionEvent) throws IOException {
@@ -174,8 +145,10 @@ public class Client03FormController {
             System.out.println("selected");
             System.out.println(file.getPath());
             isImageChoose = true;
+            this.sendMessage();
         }
     }
+
 
     public void btnExitOnAction(MouseEvent actionEvent) throws IOException {
         if (socket != null) {

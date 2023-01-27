@@ -2,34 +2,33 @@ package lk.play_tech.chat_application.controller;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import lk.play_tech.chat_application.StringUtils;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
+
+import static lk.play_tech.chat_application.KeyUtils.isEnter;
+import static lk.play_tech.chat_application.StringUtils.isImage;
 
 public class Client01FormController {
+    public static boolean isImageChoose = false;
+    final int PORT = 50000;
     public ScrollPane msgContext;
     public TextField txtMessage;
     public AnchorPane context = new AnchorPane();
-
-    final int PORT = 50000;
     public Label lblClient;
     public AnchorPane emoji;
     Socket socket;
@@ -39,7 +38,6 @@ public class Client01FormController {
     String message = "";
     int i = 10;
     String path = "";
-    public static boolean isImageChoose = false;
     ObjectOutputStream oos;
     ObjectInputStream ois;
     File file;
@@ -52,7 +50,7 @@ public class Client01FormController {
         msgContext.setContent(context);
         msgContext.vvalueProperty().bind(context.heightProperty());
         msgContext.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        msgContext.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        msgContext.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         lblClient.setText(LoginForm01Controller.name);
 
         new Thread(() -> {
@@ -67,13 +65,14 @@ public class Client01FormController {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            if (message.startsWith("/")) {
+                            if (isImage(message)) {
                                 BufferedImage sendImage = null;
                                 try {
                                     sendImage = ImageIO.read(new File(message));
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
+                                i += 10;
                                 Image img = SwingFXUtils.toFXImage(sendImage, null);
                                 ImageView imageView = new ImageView(img);
                                 imageView.setFitHeight(150);
@@ -109,73 +108,31 @@ public class Client01FormController {
                 e.printStackTrace();
             }
         });
-
-//        new Thread(() -> {
-//            try {
-//                imgSocket = new Socket("localhost", PORT + 5);
-//                while (true) {
-//                    imgOutputStream = imgSocket.getOutputStream();
-//                    imgInputStream = imgSocket.getInputStream();
-//
-//                    byte[] sizeAr = new byte[4];
-//                    imgInputStream.read(sizeAr);
-//                    int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-//
-//                    byte[] imageAr = new byte[size];
-//                    imgInputStream.read(imageAr);
-//
-//                    BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
-//
-//                    System.out.println("Received " + image.getHeight() + "x" + image.getWidth() + ": " + System.currentTimeMillis());
-//                    ImageIO.write(image, "jpg", new File("/media/sandu/0559F5C021740317/GDSE/Project_Zone/IdeaProjects/INP_Course_Work/src/lk/play_tech/chat_application/bo/test1.jpg"));
-//                    BufferedImage sendImage = ImageIO.read(new File("/media/sandu/0559F5C021740317/GDSE/Project_Zone/IdeaProjects/INP_Course_Work/src/lk/play_tech/chat_application/bo/test1.jpg"));
-//
-//                    Platform.runLater(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Image img = SwingFXUtils.toFXImage(sendImage, null);
-//                            ImageView imageView = new ImageView(img);
-//                            imageView.setFitHeight(150);
-//                            imageView.setFitWidth(150);
-//                            imageView.setLayoutY(100);
-//                            context.getChildren().add(imageView);
-//                            i += 120;
-//                        }
-//                    });
-//                }
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
     }
 
     public void btnSendOnAction(MouseEvent actionEvent) throws IOException {
-////        if (isImageChoose){
-//            BufferedImage image = ImageIO.read(new File(path));
-//
-//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//            ImageIO.write(image, "png", byteArrayOutputStream);
-//
-//            byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
-//            dataOutputStream.write(size);
-//            dataOutputStream.write(byteArrayOutputStream.toByteArray());
-//            dataOutputStream.flush();
-////        }else {
-////
-////        }
         sendMessage();
+    }
+
+    public void btnSendOnActionKeyPressed(KeyEvent keyEvent) {
+        if (isEnter(keyEvent)) {
+            try {
+                sendMessage();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void sendMessage() throws IOException {
         if (isImageChoose) {
             dataOutputStream.writeUTF(path.trim());
             dataOutputStream.flush();
-            isImageChoose = false;
-        } else {
+        } else if (!StringUtils.isBlank(txtMessage.getText())) {
             dataOutputStream.writeUTF(lblClient.getText() + " : " + txtMessage.getText().trim());
             dataOutputStream.flush();
         }
+        isImageChoose = false;
         txtMessage.clear();
     }
 
@@ -191,6 +148,7 @@ public class Client01FormController {
             System.out.println("selected");
             System.out.println(file.getPath());
             isImageChoose = true;
+            this.sendMessage();
         }
     }
 
