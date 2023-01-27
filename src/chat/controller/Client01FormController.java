@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 
+import static chat.FakerUtils.setFakeMessage;
 import static chat.KeyUtils.isEnter;
 import static chat.StringUtils.isImage;
 
@@ -125,7 +126,7 @@ public class Client01FormController {
     }
 
     private void sendMessage() throws IOException {
-
+        setFakeMessage(txtMessage);
         if (isImageChoose) {
             dataOutputStream.writeUTF(path.trim());
             dataOutputStream.flush();

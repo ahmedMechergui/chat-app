@@ -18,6 +18,6 @@
     </orderEntry>
     <orderEntry type="library" name="jfoenix-8.0.8" level="project" />
     <orderEntry type="library" name="fontawesomefx-8.9" level="project" />
-    <orderEntry type="library" name="github.javafaker" level="project" />
+    <orderEntry type="library" exported="" name="github.javafaker" level="project" />
   </component>
 </module>

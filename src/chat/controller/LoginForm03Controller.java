@@ -10,12 +10,17 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import static chat.FakerUtils.fakeName;
 import static chat.KeyUtils.isEnter;
 
 public class LoginForm03Controller {
     public TextField txtName;
     public AnchorPane loginContext;
     public static String name;
+
+    public void initialize(){
+        txtName.setText(fakeName());
+    }
 
     public void btnLoginOnAction(ActionEvent actionEvent) throws IOException {
         login();
